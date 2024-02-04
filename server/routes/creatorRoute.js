@@ -33,4 +33,21 @@ router.post("/", isCreator, uploadFile, creatorController.addContent);
 //get content by content id
 router.get("/content/:contentId", creatorController.getContentById);
 
+// add feedback to content
+router.post("/content/:contentId", creatorController.addFeedbackToContent);
+
+// delete content by id
+router.delete(
+  "/content/:contentId",
+  isCreator,
+  creatorController.deleteContentById
+);
+
+// edit content by id
+router.patch(
+  "/content/:contentId",
+  isCreator,
+  creatorController.editContentById
+);
+
 module.exports = router;

@@ -65,7 +65,7 @@ const getContentById = async (payload) => {
   //   admin/creator are allowed to get unpublised contents, but for those who are not, they will get error
   if (
     role === "ADMIN" ||
-    (role === "CREATOR" && isEqualMongo(userId, content.user))
+    (role === "CREATOR" && isEqualMongo(userId, content?.user._id))
   ) {
     return content;
   } else {
@@ -172,11 +172,94 @@ const getContentByContentId = async (payload) => {
 
   return await ContentModel.findOne({
     _id: payload.contentId,
-  });
+  })
+    .populate({
+      path: "user",
+      select: "_id name role",
+    })
+    .populate({
+      path: "feedbacks.from",
+      model: UserModel,
+      select: "_id name role", // Select the fields you want from the UserModel
+    });
 };
 
 const isEqualMongo = (first, second) => {
   return first.equals(second);
+};
+
+const addFeedbackToContent = async (payload) => {
+  if (!payload || !payload.userId) throw "User id is required";
+  if (!payload || !payload.contentId) throw "Content id is required";
+  if (!payload || !payload.message) throw "Message is required";
+  if (!payload || !payload.rating) throw "Rating is required";
+
+  const { userId, contentId, message, rating } = payload;
+
+  let content = await getContentByContentId({ contentId });
+
+  if (!contentId) throw "Content does not exists";
+
+  // updated feedback
+  content.feedbacks = [...content.feedbacks, { from: userId, message, rating }];
+
+  return await content.save();
+};
+
+const deleteContentById = async (payload) => {
+  if (!payload || !payload.userId) throw "User id is required";
+  if (!payload || !payload.contentId) throw "Content id is required";
+
+  const { userId, contentId } = payload;
+
+  // check if content exists
+  let content = await getContentByContentId({ contentId });
+
+  console.log(content, "content");
+  if (!content) throw "Content does not exists";
+
+  // if exists check its logged in user content
+  if (!isEqualMongo(content.user._id, userId))
+    throw "You can only delete your content";
+
+  // delete
+  return await ContentModel.deleteOne({ _id: contentId });
+};
+
+const editContentById = async (payload) => {
+  console.log(payload, "from ");
+
+  //   validations
+  if (!payload || !payload.userId) throw "User is required";
+  if (!payload || !payload.contentId) throw "Content Id is required";
+  if (!payload || !payload.title) throw "Title is required";
+  if (!payload || !payload.category) throw "Category is required";
+
+  const {
+    userId,
+    title,
+    description,
+    category,
+    tags,
+    status,
+    file,
+    contentId,
+  } = payload;
+
+  // get content by id
+  let content = await getContentByContentId({ contentId });
+
+  if (!content) throw "Content does not exists";
+
+  // only able to update their own content
+  if (!isEqualMongo(userId, content.user._id))
+    throw "You can only edit your contents";
+  content.title = title || content.title;
+  content.description = description || content.description;
+  content.category = category || content.category;
+  content.tags = tags?.split(",") || content.tags;
+
+  return await content.save();
 };
 
 module.exports = {
@@ -192,4 +275,7 @@ module.exports = {
   approveContent,
   getContentByContentId,
   isEqualMongo,
+  addFeedbackToContent,
+  deleteContentById,
+  editContentById,
 };

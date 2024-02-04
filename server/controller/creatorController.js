@@ -133,6 +133,92 @@ const approveContent = async (req, res) => {
   }
 };
 
+const addFeedbackToContent = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const { contentId } = req.params;
+    const { message, rating } = req.body;
+
+    const data = await creatorService.addFeedbackToContent({
+      contentId,
+      userId: _id,
+      message,
+      rating,
+    });
+
+    return res.json({
+      status: 200,
+      message: "Successfully added feedback to content content",
+      data,
+    });
+  } catch (error) {
+    console.log(error, "from get content by id method controller");
+    return res.json({ status: 400, error });
+  }
+};
+
+const deleteContentById = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const { contentId } = req.params;
+
+    const data = await creatorService.deleteContentById({
+      contentId,
+      userId: _id,
+    });
+
+    return res.json({
+      status: 200,
+      message: "Successfully deleted content",
+      data,
+    });
+  } catch (error) {
+    console.log(error, "from get content by id method controller");
+    return res.json({ status: 400, error });
+  }
+};
+
+const editContentById = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const { contentId } = req.params;
+    const { title, description, category, tags, status } = req.body;
+
+    console.log(
+      {
+        userId: _id,
+        contentId,
+        title,
+        description,
+        category,
+        tags,
+        status,
+        file: req.file,
+      },
+      "from controller"
+    );
+    const data = await creatorService.editContentById({
+      userId: _id,
+      contentId,
+      title,
+      description,
+      category,
+      tags,
+      status,
+      file: req.file,
+    });
+
+    return res.json({
+      status: 200,
+      message: "Successfully edited content",
+      data,
+    });
+  } catch (error) {
+    console.log(error, "from add content method controller");
+    return res.json({ status: 400, error });
+  }
+};
+
 module.exports = {
   getCreators,
   getCreatorById,
@@ -141,4 +227,7 @@ module.exports = {
   getContentById,
   addContent,
   approveContent,
+  addFeedbackToContent,
+  deleteContentById,
+  editContentById,
 };

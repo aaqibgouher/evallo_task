@@ -2,7 +2,7 @@
 Evallo Task
 
 ## Video Explanation
-[![Assignment Explanation](https://example.com/video-thumbnail.jpg)]()
+[![Assignment Explanation](https://example.com/video-thumbnail.jpg)](https://www.loom.com/share/ca035f88e0d8499f9f6fdb898b108944?sid=3f760926-dee2-4015-9e43-ba4b7ba0d583)
 
 
 ## Server (Node.js)
