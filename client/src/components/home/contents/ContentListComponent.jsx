@@ -30,6 +30,7 @@ import NoDataFoundComponent from "../../helper/NoDateFoundComponent";
 import ContentListItemComponent from "./ContentListItemComponent";
 import {
   approveContentAction,
+  deleteContentAction,
   getContentsAction,
 } from "../../../actions/userAction";
 import DoneIcon from "@mui/icons-material/Done";
@@ -64,6 +65,17 @@ const ContentListComponent = () => {
       );
     } catch (error) {
       console.log(error, "from approve content");
+    }
+  };
+
+  const deleteContent = async (data) => {
+    try {
+      console.log(data, "from delete");
+      await dispatch(
+        deleteContentAction({ contentId: data._id, creatorId: meState._id })
+      );
+    } catch (error) {
+      console.log(error, "from delete content");
     }
   };
 
@@ -147,16 +159,20 @@ const ContentListComponent = () => {
                         </Link>
                       )}
 
-                      {meState?.role === "CREATOR" && (
-                        <Link to={`/content/${content._id}`}>
-                          <IconButton aria-label="edit">
-                            <EditIcon />
-                          </IconButton>
-                        </Link>
-                      )}
+                      {meState?.role === "CREATOR" &&
+                        content.status === "DRAFT" && (
+                          <Link to={`/content/${content._id}/edit`}>
+                            <IconButton aria-label="edit">
+                              <EditIcon />
+                            </IconButton>
+                          </Link>
+                        )}
 
                       {meState?.role === "CREATOR" && (
-                        <IconButton aria-label="delete">
+                        <IconButton
+                          aria-label="delete"
+                          onClick={(e) => deleteContent(content)}
+                        >
                           <DeleteIcon />
                         </IconButton>
                       )}

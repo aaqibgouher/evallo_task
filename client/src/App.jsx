@@ -13,11 +13,14 @@ import ContentComponent from "./components/home/contents/ContentComponent";
 import ContentListComponent from "./components/home/contents/ContentListComponent";
 import ContentDetailComponent from "./components/home/contents/ContentDetailComponent";
 import AddContentComponent from "./components/home/contents/AddContentComponent";
+import DialogComponent from "./components/helper/DialogComponent";
+import EditContentComponent from "./components/home/contents/EditContentComponent";
 
 function App() {
   return (
     <>
       <Router>
+        <DialogComponent />
         <SnackbarComponent />
         <Routes>
           {/* Auth routes */}
@@ -37,6 +40,10 @@ function App() {
                 <Route path="" element={<ContentListComponent />} />
                 <Route path=":contentId" element={<ContentDetailComponent />} />
                 <Route path="add" element={<AddContentComponent />} />
+                <Route
+                  path=":contentId/edit"
+                  element={<EditContentComponent />}
+                />
               </Route>
             </Route>
           </Route>

@@ -173,3 +173,75 @@ export const getContentByIdApi = async (payload) => {
     throw error.response;
   }
 };
+
+export const addFeedbackApi = async (payload) => {
+  try {
+    console.log("from get me api");
+    const res = await apiService.post(
+      `/creator/content/${payload.contentId}`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    console.log(res, "from res");
+
+    if (res.hasOwnProperty("status") && res.status !== 200)
+      throw "Error while calling api";
+
+    return res.data;
+  } catch (error) {
+    console.log(error.response, "from fetch me api");
+    throw error.response;
+  }
+};
+
+export const deleteContentApi = async (payload) => {
+  try {
+    console.log(payload, "pay");
+    const res = await apiService.delete(
+      `/creator/content/${payload.contentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    console.log(res, "from res");
+
+    if (res.hasOwnProperty("status") && res.status !== 200)
+      throw "Error while calling api";
+
+    return res.data;
+  } catch (error) {
+    console.log(error.response, "from fetch me api");
+    throw error.response;
+  }
+};
+
+export const editContentApi = async (contentId, payload) => {
+  try {
+    console.log("from get me api");
+    const res = await apiService.patch(
+      `/creator/content/${contentId}`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log(res, "from res");
+
+    if (res.hasOwnProperty("status") && res.status !== 200)
+      throw "Error while calling api";
+
+    return res.data;
+  } catch (error) {
+    console.log(error.response, "from fetch me api");
+    throw error.response;
+  }
+};

@@ -1,6 +1,9 @@
 import {
   addContentApi,
+  addFeedbackApi,
   approveContentApi,
+  deleteContentApi,
+  editContentApi,
   getContentByIdApi,
   getContentsApi,
   getDashboardContentsApi,
@@ -13,6 +16,7 @@ import {
   GET_CONTENT,
   GET_CONTENTS,
   GET_ME,
+  SET_DIALOG,
   SET_SNACKBAR,
   SET_TOKEN,
 } from "../types";
@@ -205,6 +209,72 @@ export const getContentByIdAction = (payload) => async (dispatch) => {
 
     // update me state
     dispatch({ type: GET_CONTENT, payload: res.data });
+  } catch (error) {
+    console.log(error, "from get dashboard action user action");
+    dispatch({ type: SET_SNACKBAR, payload: { open: true, message: error } });
+  }
+};
+
+export const addFeedbackAction = (payload) => async (dispatch) => {
+  try {
+    const res = await addFeedbackApi(payload);
+
+    if (!res || res.status !== 200) throw res.error;
+
+    // show message
+    dispatch({
+      type: SET_SNACKBAR,
+      payload: { open: true, message: res.message },
+    });
+
+    //   close dialog
+    await dispatch({
+      type: SET_DIALOG,
+      payload: null,
+    });
+
+    // update me state
+    await dispatch(getContentByIdAction(payload));
+  } catch (error) {
+    console.log(error, "from get dashboard action user action");
+    dispatch({ type: SET_SNACKBAR, payload: { open: true, message: error } });
+  }
+};
+
+export const deleteContentAction = (payload) => async (dispatch) => {
+  try {
+    console.log(1);
+    const res = await deleteContentApi(payload);
+    console.log(2);
+    if (!res || res.status !== 200) throw res.error;
+
+    // show message
+    dispatch({
+      type: SET_SNACKBAR,
+      payload: { open: true, message: res.message },
+    });
+
+    // update me state
+    await dispatch(getContentsAction(payload));
+  } catch (error) {
+    console.log(error, "from get dashboard action user action");
+    dispatch({ type: SET_SNACKBAR, payload: { open: true, message: error } });
+  }
+};
+
+export const editContentAction = (contentId, payload) => async (dispatch) => {
+  try {
+    const res = await editContentApi(contentId, payload);
+
+    if (!res || res.status !== 200) throw res.error;
+
+    // show message
+    dispatch({
+      type: SET_SNACKBAR,
+      payload: { open: true, message: res.message },
+    });
+
+    return res;
   } catch (error) {
     console.log(error, "from get dashboard action user action");
     dispatch({ type: SET_SNACKBAR, payload: { open: true, message: error } });
